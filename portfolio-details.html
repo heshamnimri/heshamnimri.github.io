@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sham Shots Media - Brazil</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
+        /* Smartphones (portrait and landscape) ----------- */
+
+
+
         body, html {
             margin: 0;
             padding: 0;
@@ -21,7 +25,7 @@
             min-height: 100vh;
         }
         .sidebar {
-            width: 240px;
+            /* width: 240px; */
             padding: 2rem;
             position: fixed;
             height: 100vh;
@@ -37,6 +41,16 @@
             line-height: 1.3;
             letter-spacing: 0.07em;
             margin-bottom: 4rem;
+        }
+        .logo-mobile {
+            font-family: "Space Mono", monospace;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1.3;
+            letter-spacing: 0.07em;
+            text-align: center;
+            margin-top: 0px;
         }
         .logo a {
             text-decoration: none;
@@ -82,6 +96,31 @@
             height: auto;
             display: block;
         }
+
+        .image-caption {
+            padding: 12px 0px 12px 0px;
+            color: #3b3b3b;
+            font-size: 1vw;
+        }
+        /* Mobile */
+        @media only screen and (max-width: 767px) {
+            .main-content {
+                padding: 2rem;
+                width: 100%;
+                margin-left: 0px;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+
+        /* Destopk */
+        @media only screen and (min-width: 767px) {
+            .logo-mobile {
+                display: none;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -106,11 +145,38 @@
             </div>
         </aside>
         <main class="main-content">
+            <h1 class="logo-mobile">
+                SHAM SHOTS MEDIA
+            </h1>
             <div class="image-container">
-                <img src="assets/img/brazil.jpg" alt="Two people in casual wear standing in a tropical garden setting">
+                <img src="assets/img/photos/lencois-tree.jpg" alt="Isolated tree in Lencois Maranhenses">
+                <div class="image-caption">
+                    Isolated tree in Lencois Maranhenses
+                </div>
             </div>
             <div class="image-container">
-                <img src="assets/img/bolivia.jpg" alt="Teal vehicle with surfboards on beach">
+                <img src="assets/img/photos/brazil.jpg" alt="Two people in casual wear standing in a tropical garden setting">
+                <div class="image-caption">
+                    Man fishing in Salvador Bahia
+                </div>
+            </div>
+            <div class="image-container">
+                <img src="assets/img/photos/bolivia.jpg" alt="Teal vehicle with surfboards on beach">
+                <div class="image-caption">
+                    Driving through Salar De Uyuni
+                </div>
+            </div>
+            <div class="image-container">
+                <img src="assets/img/photos/CR-coffee-tour.jpg" alt="Coffee Tour in Costa Rica Alajuela Provience">
+                <div class="image-caption">
+                    Coffee Tour in Costa Rica Alajuela Provience
+                </div>
+            </div>
+            <div class="image-container">
+                <img src="assets/img/photos/morocco.jpg" alt="Atacama Dessert">
+                <div class="image-caption">
+                    Atacama Dessert
+                </div>
             </div>
         </main>
     </div>
