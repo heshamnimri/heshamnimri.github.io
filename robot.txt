@@ -1,0 +1,16 @@
+# Allow all web crawlers full access
+User-agent: *
+Disallow:
+
+# Block specific admin or sensitive directories (if they exist)
+Disallow: /admin/
+Disallow: /login/
+Disallow: /config/
+
+# Allow crawling of your images and media files for better SEO
+Allow: /images/
+Allow: /videos/
+
+# Sitemaps for better indexing
+Sitemap: https://hishamnimri.com/sitemap.xml
+Sitemap: https://shamshots.com/sitemap.xml
