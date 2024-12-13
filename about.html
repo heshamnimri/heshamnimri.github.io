@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>About | Hesham Nimri - Sham Shots</title>
+    
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="description" content="Learn more about Hesham Nimri's photojournalism work and the stories behind Sham Shots Media.">
+    
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100%;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            padding: 2rem;
+            position: fixed;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        .logo {
+            font-family: "Space Mono", monospace;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 40px;
+            line-height: 1.3;
+            letter-spacing: 0.07em;
+            margin-bottom: 4rem;
+        }
+        .logo-mobile {
+            font-family: "Space Mono", monospace;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1.3;
+            letter-spacing: 0.07em;
+            text-align: center;
+            margin-top: 0px;
+        }
+        .logo a {
+            text-decoration: none;
+            color: #000;
+        }
+        .nav {
+            margin-bottom: 2rem;
+        }
+        .nav a {
+            display: block;
+            margin-bottom: 1rem;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .nav a.active {
+            color: #10B981;
+        }
+        .social {
+            margin-top: auto;
+        }
+        .social a {
+            display: flex;
+            align-items: center;
+            color: #999;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-size: 14px;
+        }
+        .main-content {
+            margin-left: 240px;
+            padding: 2rem;
+            width: calc(100% - 240px);
+            line-height: 1.6;
+        }
+        .about-section {
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+        .about-section h2 {
+            font-family: "Space Mono", monospace;
+            margin-bottom: 1.5rem;
+            font-size: 24px;
+        }
+        .about-section p {
+            margin-bottom: 1rem;
+            color: #444;
+        }
+
+        .image-container {
+            width: 40%;
+            height: 40%;
+            padding: 20px 40px
+        }
+
+        .about-section-align {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        @media only screen and (max-width: 767px) {
+            .main-content {
+                padding: 2rem;
+                width: 100%;
+                margin-left: 0px;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+        @media only screen and (min-width: 767px) {
+            .logo-mobile {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h1 class="logo">
+                <a href="portfolio-details.html">
+                    SHAM<br>
+                    SHOTS<br>
+                    MEDIA
+                </a>
+            </h1>
+            <nav class="nav">
+                <a href="about.html" class="active">About</a>
+                <a href="index.html">Brazil</a>
+                <a href="us-2024-elections.html">US 2024 Elections</a>
+                <a href="https://sham-shots.darkroom.com/collections/lencois-maranhenses">Store</a>
+            </nav>
+            <div class="social">
+                <a href="https://x.com/shamshots">Twitter</a>
+                <a href="https://www.instagram.com/sham_gram_/">Instagram</a>
+                <a href="mailto:press.journalist.media@proton.me">Email</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <h1 class="logo-mobile">
+                SHAM SHOTS MEDIA
+            </h1>
+            <div class="about-section-align">
+                <div>
+                    <div class="about-section">
+                        <h3>WHAT IS SHAM SHOTS MEDIA?</h3>
+                        <p>Sham Shots Media is a visual storytelling platform founded by photojournalist Hesham Nimri. Through the lens of documentary photography and film, we capture compelling narratives that bridge cultural understanding and shed light on underreported stories from around the world.</p>
+                        <p>Our work spans across continents, from the vibrant streets of Brazil to the political landscape of the United States, always seeking to uncover the human elements that connect us all.</p>
+                    </div>
+                    <div class="about-section">
+                        <h3>OUR WORK</h3>
+                        <p>We specialize in long-form visual storytelling, documentary photography, and photojournalism. Our projects focus on social issues, cultural documentation, and environmental stories that deserve attention and understanding.</p>
+                        <p>Recent work includes coverage of Brazil's dynamic social landscape, documentation of traditional communities in Lençóis Maranhenses, and ongoing coverage of the 2024 US election cycle.</p>
+                    </div>
+                    <div class="about-section">
+                        <h3>MISSION</h3>
+                        <p>Our mission is to create visual narratives that inspire empathy, understanding, and action. Through careful documentation and storytelling, we aim to bridge cultural gaps and bring important stories to light.</p>
+                    </div>
+                </div>
+                <img class="image-container" src="assets/img/photos/bag-big.jpg" alt="Teal vehicle with surfboards on beach">
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>
