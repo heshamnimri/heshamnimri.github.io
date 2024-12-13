@@ -46,119 +46,22 @@
     <meta name="shareaholic:site_id" content="3f15d1ec01e3499e00e7593b99411a70" />
     <script data-cfasync="false" async src="https://cdn.shareaholic.net/assets/pub/shareaholic.js"></script> -->
 
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            height: 100%;
-        }
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        .sidebar {
-            /* width: 240px; */
-            padding: 2rem;
-            position: fixed;
-            height: 100vh;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-        }
-        .logo {
-            font-family: "Space Mono", monospace;
-            font-weight: 400;
-            font-style: normal;
-            font-size: 40px;
-            line-height: 1.3;
-            letter-spacing: 0.07em;
-            margin-bottom: 4rem;
-        }
-        .logo-mobile {
-            font-family: "Space Mono", monospace;
-            font-weight: 400;
-            font-style: normal;
-            font-size: 24px;
-            line-height: 1.3;
-            letter-spacing: 0.07em;
-            text-align: center;
-            margin-top: 0px;
-        }
-        .logo a {
-            text-decoration: none;
-            color: #000;
-        }
-        .nav {
-            margin-bottom: 2rem;
-        }
-        .nav a {
-            display: block;
-            margin-bottom: 1rem;
-            color: #666;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .nav a.active {
-            color: #10B981;
-        }
-        .social {
-            margin-top: auto;
-        }
-        .social a {
-            display: flex;
-            align-items: center;
-            color: #999;
-            text-decoration: none;
-            margin-bottom: 1rem;
-            font-size: 14px;
-        }
-        .social svg {
-            margin-right: 0.5rem;
-        }
-        .main-content {
-            margin-left: 240px;
-            padding: 2rem;
-            width: calc(100% - 240px);
-        }
-        .image-container {
-            margin-bottom: 2rem;
-        }
-        .image-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-        .image-caption {
-            padding: 12px 0px 12px 0px;
-            color: #3b3b3b;
-            font-size: 1vw;
+    <script>
+        // hamburger menu
+        function myFunction() {
+        var x = document.getElementById("myLinks");
+        if (x.style.display === "block") {
+            x.style.display = "none";
+        } else {
+            x.style.display = "block";
         }
+        }
+    </script>
+    
+    <link href="assets/css/styles.css" rel="stylesheet">
 
-        .hidden {
-            display: none;
-        }
-        /* Mobile */
-        @media only screen and (max-width: 767px) {
-            .main-content {
-                padding: 2rem;
-                width: 100%;
-                margin-left: 0px;
-            }
-            .sidebar {
-                display: none;
-            }
-        }
-
-        /* Destopk */
-        @media only screen and (min-width: 767px) {
-            .logo-mobile {
-                display: none;
-            }
-        }
-
-    </style>
 </head>
 <body>
     <div class="container">
@@ -186,9 +89,27 @@
             </div>
         </aside>
         <main class="main-content">
-            <h1 class="logo-mobile">
-                SHAM SHOTS MEDIA
-            </h1>
+
+            <div class="topnav">
+                <h1 class="logo-mobile">
+                    SHAM SHOTS MEDIA
+                </h1>
+
+                <!-- Navigation links (hidden by default) -->
+                <div id="myLinks">
+                    <a href="about.html">About</a>
+                    <a href="index.html">Brazil</a>
+                    <a href="us-2024-elections.html" class="nav-active" >US 2024 Elections</a>
+                    <a href="https://sham-shots.darkroom.com/collections/lencois-maranhenses">Store</a>
+                    <a href="https://www.instagram.com/sham_gram_/">Instagram</a>
+                </div>
+
+                <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+                <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+
             <div class="image-container">
                 <img src="assets/img/photos/elections/1.jpg" alt="New york polling station">
                 <div class="image-caption">
