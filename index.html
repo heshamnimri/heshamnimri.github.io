@@ -47,15 +47,28 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script>
-        // hamburger menu
         function myFunction() {
-        var x = document.getElementById("myLinks");
-        if (x.style.display === "block") {
-            x.style.display = "none";
-        } else {
-            x.style.display = "block";
+            var x = document.getElementById("myLinks");
+            var icon = document.querySelector(".icon i");
+            
+            if (x.style.display === "block") {
+                x.style.display = "none";
+                icon.className = "fa fa-bars";
+            } else {
+                x.style.display = "block";
+                icon.className = "fa fa-times";
+            }
         }
-        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            var menu = document.getElementById("myLinks");
+            var hamburger = document.querySelector(".icon");
+            
+            if (!menu.contains(event.target) && !hamburger.contains(event.target) && menu.style.display === "block") {
+                myFunction();
+            }
+        });
     </script>
 
     <link href="assets/css/styles.css" rel="stylesheet">
@@ -74,9 +87,13 @@
                     Hesham Nimri Photojournalism and Media
                 </a>
             </h1>
+            <div class="view-toggle">
+                <button onclick="toggleView('grid')" class="active" id="gridBtn">Grid</button>
+                <button onclick="toggleView('list')" id="listBtn">List</button>
+            </div>
             <nav class="nav">
                 <a href="about.html">About</a>
-                <a href="index.html" class="active">Brazil</a>
+                <a href="index.html" class="active">Collection</a>
                 <a href="us-2024-elections.html">US 2024 Elections</a>
                 <a href="https://sham-shots.darkroom.com/collections/lencois-maranhenses">Store</a>
             </nav>
@@ -96,49 +113,86 @@
                 <!-- Navigation links (hidden by default) -->
                 <div id="myLinks">
                     <a href="about.html">About</a>
-                    <a href="index.html" class="nav-active">Brazil</a>
+                    <a href="index.html" class="nav-active">Collection</a>
                     <a href="us-2024-elections.html">US 2024 Elections</a>
                     <a href="https://sham-shots.darkroom.com/collections/lencois-maranhenses">Store</a>
-                    <a href="https://www.instagram.com/sham_gram_/">Instagram</a>
+                    <div class="mobile-social">
+                        <a href="https://x.com/shamshots">Twitter</a>
+                        <a href="https://www.instagram.com/sham_gram_/">Instagram</a>
+                        <a href="mailto:press.journalist.media@proton.me">Email</a>
+                    </div>
                 </div>
 
-                <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
+                <!-- Hamburger menu button -->
                 <a href="javascript:void(0);" class="icon" onclick="myFunction()">
                     <i class="fa fa-bars"></i>
                 </a>
             </div>
 
-            <div class="image-container">
-                <img src="assets/img/photos/lencois-tree.jpg" alt="Isolated tree in Lencois Maranhenses">
-                <div class="image-caption">
-                    Isolated tree in Lencois Maranhenses
+            <div class="grid-view" id="imageContainer">
+                <div class="image-container">
+                    <img src="assets/img/photos/lencois-tree.jpg" alt="Isolated tree in Lencois Maranhenses">
+                    <div class="image-caption">
+                        Isolated tree in Lencois Maranhenses
+                    </div>
                 </div>
-            </div>
-            <div class="image-container">
-                <img src="assets/img/photos/brazil.jpg" alt="Two people in casual wear standing in a tropical garden setting">
-                <div class="image-caption">
-                    Man fishing in Salvador Bahia
+                <div class="image-container">
+                    <img src="assets/img/photos/brazil.jpg" alt="Two people in casual wear standing in a tropical garden setting">
+                    <div class="image-caption">
+                        Man fishing in Salvador Bahia
+                    </div>
                 </div>
-            </div>
-            <div class="image-container">
-                <img src="assets/img/photos/bolivia.jpg" alt="Teal vehicle with surfboards on beach">
-                <div class="image-caption">
-                    Driving through Salar De Uyuni
+                <div class="image-container">
+                    <img src="assets/img/photos/bolivia.jpg" alt="Teal vehicle with surfboards on beach">
+                    <div class="image-caption">
+                        Driving through Salar De Uyuni
+                    </div>
                 </div>
-            </div>
-            <div class="image-container">
-                <img src="assets/img/photos/CR-coffee-tour.jpg" alt="Coffee Tour in Costa Rica Alajuela Provience">
-                <div class="image-caption">
-                    Coffee Tour in Costa Rica Alajuela Provience
+                <div class="image-container">
+                    <img src="assets/img/photos/CR-coffee-tour.jpg" alt="Coffee Tour in Costa Rica Alajuela Provience">
+                    <div class="image-caption">
+                        Coffee Tour in Costa Rica Alajuela Provience
+                    </div>
                 </div>
-            </div>
-            <div class="image-container">
-                <img src="assets/img/photos/morocco.jpg" alt="Atacama Dessert">
-                <div class="image-caption">
-                    Atacama Dessert
+                <div class="image-container">
+                    <img src="assets/img/photos/morocco.jpg" alt="Atacama Dessert">
+                    <div class="image-caption">
+                        Atacama Dessert
+                    </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <script>
+        function toggleView(view) {
+            const container = document.getElementById('imageContainer');
+            const gridBtn = document.getElementById('gridBtn');
+            const listBtn = document.getElementById('listBtn');
+            
+            if (view === 'grid') {
+                container.className = 'grid-view';
+                gridBtn.classList.add('active');
+                listBtn.classList.remove('active');
+            } else {
+                container.className = 'list-view';
+                listBtn.classList.add('active');
+                gridBtn.classList.remove('active');
+            }
+        }
+
+        // Optional: Add click handler to expand images
+        document.querySelectorAll('.image-container').forEach(container => {
+            container.addEventListener('click', function() {
+                const imageContainer = document.getElementById('imageContainer');
+                if (imageContainer.classList.contains('grid-view')) {
+                    imageContainer.classList.remove('grid-view');
+                    imageContainer.classList.add('list-view');
+                    document.getElementById('listBtn').classList.add('active');
+                    document.getElementById('gridBtn').classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
