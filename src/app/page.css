@@ -1,0 +1,92 @@
+.grid-view {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.grid-view .image-container {
+  margin-bottom: 0;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.grid-view .image-container:hover {
+  transform: scale(1.02);
+}
+
+.grid-view .image-caption {
+  font-size: var(--font-size-caption-grid);
+  padding: 6px 0;
+}
+
+.list-view .image-container {
+  margin-bottom: 2rem;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.image-caption {
+  padding: 12px 0;
+  color: var(--color-text-caption);
+  font-size: var(--font-size-caption);
+}
+
+.view-toggle {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+  gap: 8px;
+}
+
+.view-toggle button {
+  background: none;
+  border: 1px solid var(--color-border-medium);
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: var(--font-size-button);
+  border-radius: 3px;
+  color: var(--color-text-nav);
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.view-toggle button:hover {
+  border-color: var(--color-text-nav);
+}
+
+.view-toggle button.active {
+  background: var(--color-bg-active);
+  color: var(--color-text-button);
+  border-color: var(--color-text-nav);
+}
+
+@media only screen and (max-width: 767px) {
+  .grid-view {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .grid-view .image-caption {
+    font-size: var(--font-size-caption-grid);
+    padding: 6px 0;
+  }
+
+  .image-caption {
+    font-size: var(--font-size-caption-grid);
+    padding: 6px 0;
+  }
+
+  .view-toggle {
+    padding: 0 0.5rem;
+  }
+
+  .view-toggle button {
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+}

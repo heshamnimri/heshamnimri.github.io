@@ -1,0 +1,35 @@
+.about-section-align {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.about-section {
+  max-width: 600px;
+  margin-bottom: 3rem;
+}
+
+.about-section h3 {
+  margin-bottom: 1.5rem;
+  font-size: var(--font-size-heading);
+}
+
+.about-section p {
+  margin-bottom: 1rem;
+  color: var(--color-text-body);
+}
+
+.image-container-side {
+  padding: 20px 40px;
+}
+
+@media only screen and (max-width: 767px) {
+  .image-container-side {
+    width: 100% !important;
+    padding: 10px 0;
+  }
+
+  .about-section {
+    padding: 0 10px;
+  }
+}

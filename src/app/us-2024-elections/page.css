@@ -1,0 +1,27 @@
+.image-container {
+  margin-bottom: 2rem;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.image-caption {
+  padding: 12px 0;
+  color: var(--color-text-caption);
+  font-size: var(--font-size-caption);
+}
+
+@media only screen and (max-width: 767px) {
+  .image-container {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .image-caption {
+    font-size: var(--font-size-caption-grid);
+    padding: 6px 0;
+  }
+}
