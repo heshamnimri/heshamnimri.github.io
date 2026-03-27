@@ -48,15 +48,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script>
-        // hamburger menu
         function myFunction() {
-        var x = document.getElementById("myLinks");
-        if (x.style.display === "block") {
-            x.style.display = "none";
-        } else {
-            x.style.display = "block";
+            var x = document.getElementById("myLinks");
+            var icon = document.querySelector(".icon i");
+
+            if (x.style.display === "block") {
+                x.style.display = "none";
+                icon.className = "fa fa-bars";
+            } else {
+                x.style.display = "block";
+                icon.className = "fa fa-times";
+            }
         }
-        }
+
+        document.addEventListener('click', function(event) {
+            var menu = document.getElementById("myLinks");
+            var hamburger = document.querySelector(".icon");
+
+            if (!menu.contains(event.target) && !hamburger.contains(event.target) && menu.style.display === "block") {
+                myFunction();
+            }
+        });
     </script>
     
     <link href="assets/css/styles.css" rel="stylesheet">
@@ -77,8 +89,9 @@
             </h1>
             <nav class="nav">
                 <a href="about.html">About</a>
-                <a href="index.html">Brazil</a>
+                <a href="index.html">Collection</a>
                 <a href="us-2024-elections.html" class="active">US 2024 Elections</a>
+                <a href="blog.html">Blog</a>
                 <a href="https://sham-shots.darkroom.com/collections/lencois-maranhenses">Store</a>
             </nav>
             <div class="social">
@@ -97,10 +110,15 @@
                 <!-- Navigation links (hidden by default) -->
                 <div id="myLinks">
                     <a href="about.html">About</a>
-                    <a href="index.html">Brazil</a>
-                    <a href="us-2024-elections.html" class="nav-active" >US 2024 Elections</a>
+                    <a href="index.html">Collection</a>
+                    <a href="us-2024-elections.html" class="nav-active">US 2024 Elections</a>
+                    <a href="blog.html">Blog</a>
                     <a href="https://sham-shots.darkroom.com/collections/lencois-maranhenses">Store</a>
-                    <a href="https://www.instagram.com/sham_gram_/">Instagram</a>
+                    <div class="mobile-social">
+                        <a href="https://x.com/shamshots">Twitter</a>
+                        <a href="https://www.instagram.com/sham_gram_/">Instagram</a>
+                        <a href="mailto:press.journalist.media@proton.me">Email</a>
+                    </div>
                 </div>
 
                 <!-- "Hamburger menu" / "Bar icon" to toggle the navigation links -->
