@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Mono } from "next/font/google";
 import { Sidebar } from "@/components/Sidebar";
 import { MobileNav } from "@/components/MobileNav";
+import { Analytics } from "@/components/Analytics";
 import "./globals.css";
 import "./layout.css";
 
@@ -75,7 +76,10 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-29DF4H2TN6');
+              gtag('config', 'G-29DF4H2TN6', {
+                send_page_view: true,
+                cookie_flags: 'SameSite=None;Secure',
+              });
             `,
           }}
         />
@@ -85,6 +89,7 @@ export default function RootLayout({
           <Sidebar />
           <main className="main-content">
             <MobileNav />
+            <Analytics />
             {children}
           </main>
         </div>

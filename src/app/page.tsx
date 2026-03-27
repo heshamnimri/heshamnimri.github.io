@@ -35,17 +35,24 @@ const photos = [
 export default function CollectionPage() {
   const [view, setView] = useState<"grid" | "list">("grid");
 
+  function switchView(v: "grid" | "list") {
+    setView(v);
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "view_toggle", { view_mode: v });
+    }
+  }
+
   return (
     <>
       <div className="view-toggle">
         <button
-          onClick={() => setView("grid")}
+          onClick={() => switchView("grid")}
           className={view === "grid" ? "active" : ""}
         >
           Grid
         </button>
         <button
-          onClick={() => setView("list")}
+          onClick={() => switchView("list")}
           className={view === "list" ? "active" : ""}
         >
           List
@@ -57,7 +64,7 @@ export default function CollectionPage() {
           <div
             key={photo.src}
             className="image-container"
-            onClick={() => view === "grid" && setView("list")}
+            onClick={() => view === "grid" && switchView("list")}
           >
             <Image
               src={photo.src}

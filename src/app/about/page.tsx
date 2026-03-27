@@ -19,6 +19,13 @@ export default function AboutPage() {
             to the political landscape of the United States, always seeking to
             uncover the human elements that connect us all.
           </p>
+          <Image
+              className="image-container-side"
+              src="/photos/me.jpg"
+              alt="Sham Shots Media"
+              width={600}
+              height={800}
+            />
         </div>
         <div className="about-section">
           <h3>OUR WORK</h3>
@@ -45,14 +52,6 @@ export default function AboutPage() {
           </p>
         </div>
       </div>
-      <Image
-        className="image-container-side"
-        src="/photos/bag-big.jpg"
-        alt="Sham Shots Media"
-        width={400}
-        height={600}
-        style={{ width: "40%", height: "auto" }}
-      />
     </div>
   );
 }
