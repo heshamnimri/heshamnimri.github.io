@@ -1,6 +1,20 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import "./blog.css";
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description:
+    "Stories and insights from photojournalist Hesham Nimri — behind-the-scenes coverage of documentary photography projects around the world.",
+  alternates: { canonical: "https://hishamnimri.com/blog" },
+  openGraph: {
+    title: "Blog | Sham Shots Media",
+    description:
+      "Stories and insights from photojournalist Hesham Nimri.",
+    url: "https://hishamnimri.com/blog",
+  },
+};
 
 const posts = [
   {
@@ -18,6 +32,7 @@ const posts = [
 export default function BlogPage() {
   return (
     <div className="blog-index">
+      <h1 className="sr-only">Blog</h1>
       {posts.map((post) => (
         <article key={post.slug} className="blog-entry">
           <Link href={`/blog/${post.slug}`}>

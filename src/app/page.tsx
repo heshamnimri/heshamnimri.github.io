@@ -1,82 +1,35 @@
-"use client";
-
-import { useState } from "react";
-import Image from "next/image";
+import type { Metadata } from "next";
+import { PhotoGallery } from "@/components/PhotoGallery";
 import "./page.css";
 
-const photos = [
-  {
-    src: "/photos/lencois-tree.jpg",
-    alt: "Isolated tree in Lencois Maranhenses",
-    caption: "Isolated tree in Lencois Maranhenses",
+export const metadata: Metadata = {
+  title: {
+    absolute: "Sham Shots Media | Hesham Nimri - Documentary Photography",
   },
-  {
-    src: "/photos/brazil.jpg",
-    alt: "Two people in casual wear standing in a tropical garden setting",
-    caption: "Man fishing in Salvador Bahia",
+  description:
+    "Browse the photography collection by Hesham Nimri — documentary and travel photography from Brazil, Bolivia, Costa Rica, and beyond.",
+  alternates: { canonical: "https://hishamnimri.com/" },
+  openGraph: {
+    title: "Photography Collection | Sham Shots Media",
+    description:
+      "Documentary and travel photography from Brazil, Bolivia, Costa Rica, and beyond.",
+    url: "https://hishamnimri.com",
+    images: [
+      {
+        url: "/photos/lencois-tree.jpg",
+        width: 1200,
+        height: 800,
+        alt: "Isolated tree in Lencois Maranhenses",
+      },
+    ],
   },
-  {
-    src: "/photos/bolivia.jpg",
-    alt: "Teal vehicle with surfboards on beach",
-    caption: "Driving through Salar De Uyuni",
-  },
-  {
-    src: "/photos/CR-coffee-tour.jpg",
-    alt: "Coffee Tour in Costa Rica Alajuela Provience",
-    caption: "Coffee Tour in Costa Rica Alajuela Provience",
-  },
-  {
-    src: "/photos/morocco.jpg",
-    alt: "Atacama Dessert",
-    caption: "Atacama Dessert",
-  },
-];
+};
 
 export default function CollectionPage() {
-  const [view, setView] = useState<"grid" | "list">("grid");
-
-  function switchView(v: "grid" | "list") {
-    setView(v);
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("event", "view_toggle", { view_mode: v });
-    }
-  }
-
   return (
     <>
-      <div className="view-toggle">
-        <button
-          onClick={() => switchView("grid")}
-          className={view === "grid" ? "active" : ""}
-        >
-          Grid
-        </button>
-        <button
-          onClick={() => switchView("list")}
-          className={view === "list" ? "active" : ""}
-        >
-          List
-        </button>
-      </div>
-
-      <div className={view === "grid" ? "grid-view" : "list-view"}>
-        {photos.map((photo) => (
-          <div
-            key={photo.src}
-            className="image-container"
-            onClick={() => view === "grid" && switchView("list")}
-          >
-            <Image
-              src={photo.src}
-              alt={photo.alt}
-              width={800}
-              height={600}
-              style={{ width: "100%", height: "auto" }}
-            />
-            <div className="image-caption">{photo.caption}</div>
-          </div>
-        ))}
-      </div>
+      <h1 className="sr-only">Photography Collection</h1>
+      <PhotoGallery />
     </>
   );
 }

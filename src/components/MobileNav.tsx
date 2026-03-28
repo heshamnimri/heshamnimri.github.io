@@ -19,7 +19,6 @@ const navLinks = [
 
 const socialLinks = [
   { href: "https://x.com/shamshots", label: "Twitter" },
-  { href: "https://www.instagram.com/sham_gram_/", label: "Instagram" },
   { href: "mailto:press.journalist.media@proton.me", label: "Email" },
 ];
 

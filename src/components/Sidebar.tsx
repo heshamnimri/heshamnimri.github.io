@@ -18,7 +18,6 @@ const navLinks = [
 
 const socialLinks = [
   { href: "https://x.com/shamshots", label: "Twitter" },
-  { href: "https://www.instagram.com/sham_gram_/", label: "Instagram" },
   { href: "mailto:press.journalist.media@proton.me", label: "Email" },
 ];
 
@@ -28,7 +27,7 @@ export function Sidebar() {
   return (
     <aside className="sidebar">
       <h1 className="logo">
-        <Link href="/about">
+        <Link href="/">
           SHAM<br />
           SHOTS<br />
           MEDIA

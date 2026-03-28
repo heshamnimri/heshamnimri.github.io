@@ -1,12 +1,26 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import "./page.css";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Learn about Sham Shots Media and photojournalist Hesham Nimri. A visual storytelling platform capturing compelling narratives through documentary photography and film.",
+  alternates: { canonical: "https://hishamnimri.com/about" },
+  openGraph: {
+    title: "About Sham Shots Media",
+    description:
+      "Visual storytelling platform founded by photojournalist Hesham Nimri.",
+    url: "https://hishamnimri.com/about",
+  },
+};
 
 export default function AboutPage() {
   return (
     <div className="about-section-align">
       <div>
         <div className="about-section">
-          <h3>WHAT IS SHAM SHOTS MEDIA?</h3>
+          <h1>What is Sham Shots Media?</h1>
           <p>
             Sham Shots Media is a visual storytelling platform founded by
             photojournalist Hesham Nimri. Through the lens of documentary
@@ -22,13 +36,13 @@ export default function AboutPage() {
           <Image
               className="image-container-side"
               src="/photos/me.jpg"
-              alt="Sham Shots Media"
+              alt="Hesham Nimri, photojournalist and founder of Sham Shots Media"
               width={600}
               height={800}
             />
         </div>
         <div className="about-section">
-          <h3>OUR WORK</h3>
+          <h2>Our Work</h2>
           <p>
             We specialize in long-form visual storytelling, documentary
             photography, and photojournalism. Our projects focus on social
@@ -43,7 +57,7 @@ export default function AboutPage() {
           </p>
         </div>
         <div className="about-section">
-          <h3>MISSION</h3>
+          <h2>Mission</h2>
           <p>
             Our mission is to create visual narratives that inspire empathy,
             understanding, and action. Through careful documentation and
