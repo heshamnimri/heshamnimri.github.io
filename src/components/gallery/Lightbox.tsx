@@ -14,8 +14,6 @@ type Props = {
   onFavorite?: (id: string) => void;
 };
 
-const DOUBLE_TAP_MS = 300;
-
 export function Lightbox({
   slug,
   photos,
@@ -26,16 +24,13 @@ export function Lightbox({
   onFavorite,
 }: Props) {
   const photo = photos[index];
-  const [zoom, setZoom] = useState(false);
   const [saving, setSaving] = useState<string | null>(null);
   const touch = useRef<{ x: number; y: number; t: number } | null>(null);
-  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTouchEnd = useRef(0);
 
   const go = useCallback(
     (delta: number) => {
       const next = (index + delta + photos.length) % photos.length;
-      setZoom(false);
       onIndex(next);
     },
     [index, photos.length, onIndex],
@@ -53,7 +48,6 @@ export function Lightbox({
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
-      if (tapTimer.current) clearTimeout(tapTimer.current);
     };
   }, [go, onClose]);
 
@@ -67,20 +61,6 @@ export function Lightbox({
 
   if (!photo) return null;
 
-  /** One tap or click advances; two in quick succession toggle zoom instead. */
-  function singleOrDoubleTap() {
-    if (tapTimer.current) {
-      clearTimeout(tapTimer.current);
-      tapTimer.current = null;
-      setZoom((z) => !z);
-      return;
-    }
-    tapTimer.current = setTimeout(() => {
-      tapTimer.current = null;
-      if (!zoom) go(1);
-    }, DOUBLE_TAP_MS);
-  }
-
   function onTouchStart(e: React.TouchEvent) {
     if (e.touches.length !== 1) return;
     const t = e.touches[0];
@@ -90,7 +70,7 @@ export function Lightbox({
     lastTouchEnd.current = Date.now();
     const start = touch.current;
     touch.current = null;
-    if (!start || zoom) return;
+    if (!start) return;
     const t = e.changedTouches[0];
     const dx = t.clientX - start.x;
     const dy = t.clientY - start.y;
@@ -101,14 +81,14 @@ export function Lightbox({
       onClose();
     } else if (Math.abs(dx) < 10 && Math.abs(dy) < 10 && dt < 300) {
       const target = e.target as HTMLElement;
-      if (target.tagName === "IMG") singleOrDoubleTap();
+      if (target.tagName === "IMG") go(1);
     }
   }
 
   function onImageClick() {
     // Touch devices already handled this in onTouchEnd; skip the synthetic click.
     if (Date.now() - lastTouchEnd.current < 500) return;
-    singleOrDoubleTap();
+    go(1);
   }
 
   async function onDownload() {
@@ -158,7 +138,7 @@ export function Lightbox({
         ‹
       </button>
       <div
-        className={`lightbox-stage ${zoom ? "is-zoomed" : ""}`}
+        className="lightbox-stage"
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
