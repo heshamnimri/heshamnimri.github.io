@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
+  mediaCredentials,
   apiBase,
   formatBytes,
   formatDate,
@@ -41,7 +42,7 @@ export function EventGallery({ slug }: { slug: string }) {
     try {
       const res = await fetch(manifestUrl(slug), {
         cache: "no-store",
-        credentials: "include",
+        credentials: mediaCredentials(),
       });
       if (res.status === 404) return setStatus({ kind: "missing" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

@@ -106,3 +106,13 @@ export function track(event: string, params: Record<string, unknown> = {}) {
     window.gtag("event", event, params);
   }
 }
+
+/**
+ * Cookies are only meaningful when the Worker fronts the media (passcode
+ * cookie). A plain R2 custom domain does not send
+ * Access-Control-Allow-Credentials, and browsers reject credentialed
+ * requests without it, so stay in "omit" mode until the API exists.
+ */
+export function mediaCredentials(): RequestCredentials {
+  return apiBase() ? "include" : "omit";
+}
