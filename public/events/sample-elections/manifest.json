@@ -1,0 +1,51 @@
+{
+  "slug": "sample-elections",
+  "title": "US 2024 Elections (sample)",
+  "date": "2024-11-05",
+  "note": "Sample gallery used to test event delivery. Download anything you like.",
+  "cover": "1",
+  "published": "2026-09-10",
+  "zip": {
+    "file": "all-photos.zip",
+    "bytes": 3593305,
+    "count": 4
+  },
+  "features": {
+    "favorites": true,
+    "upload": false
+  },
+  "photos": [
+    {
+      "id": "1",
+      "w": 2048,
+      "h": 1365,
+      "bytes": 950261,
+      "ext": "jpg",
+      "taken": "2024-11-07T13:08:35"
+    },
+    {
+      "id": "2",
+      "w": 2048,
+      "h": 1365,
+      "bytes": 1137467,
+      "ext": "jpg",
+      "taken": "2024-11-07T13:06:26"
+    },
+    {
+      "id": "3",
+      "w": 2048,
+      "h": 1365,
+      "bytes": 455161,
+      "ext": "jpg",
+      "taken": "2024-11-07T13:06:15"
+    },
+    {
+      "id": "4",
+      "w": 2048,
+      "h": 1365,
+      "bytes": 1049850,
+      "ext": "jpg",
+      "taken": "2024-11-07T13:06:06"
+    }
+  ]
+}
