@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { photoUrl, track, type EventPhoto } from "@/lib/events";
+import { savePhoto } from "./savePhoto";
 
 type Props = {
   slug: string;
@@ -12,6 +13,8 @@ type Props = {
   favorites?: Set<string>;
   onFavorite?: (id: string) => void;
 };
+
+const DOUBLE_TAP_MS = 300;
 
 export function Lightbox({
   slug,
@@ -24,8 +27,10 @@ export function Lightbox({
 }: Props) {
   const photo = photos[index];
   const [zoom, setZoom] = useState(false);
+  const [saving, setSaving] = useState<string | null>(null);
   const touch = useRef<{ x: number; y: number; t: number } | null>(null);
-  const lastTap = useRef(0);
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastTouchEnd = useRef(0);
 
   const go = useCallback(
     (delta: number) => {
@@ -39,7 +44,7 @@ export function Lightbox({
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowRight") go(1);
+      else if (e.key === "ArrowRight" || e.key === " ") go(1);
       else if (e.key === "ArrowLeft") go(-1);
     }
     document.addEventListener("keydown", onKey);
@@ -48,10 +53,11 @@ export function Lightbox({
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
+      if (tapTimer.current) clearTimeout(tapTimer.current);
     };
   }, [go, onClose]);
 
-  // Preload neighbours so swiping feels instant.
+  // Preload neighbours so advancing feels instant.
   useEffect(() => {
     [1, -1].forEach((d) => {
       const p = photos[(index + d + photos.length) % photos.length];
@@ -61,12 +67,27 @@ export function Lightbox({
 
   if (!photo) return null;
 
+  /** One tap or click advances; two in quick succession toggle zoom instead. */
+  function singleOrDoubleTap() {
+    if (tapTimer.current) {
+      clearTimeout(tapTimer.current);
+      tapTimer.current = null;
+      setZoom((z) => !z);
+      return;
+    }
+    tapTimer.current = setTimeout(() => {
+      tapTimer.current = null;
+      if (!zoom) go(1);
+    }, DOUBLE_TAP_MS);
+  }
+
   function onTouchStart(e: React.TouchEvent) {
     if (e.touches.length !== 1) return;
     const t = e.touches[0];
     touch.current = { x: t.clientX, y: t.clientY, t: Date.now() };
   }
   function onTouchEnd(e: React.TouchEvent) {
+    lastTouchEnd.current = Date.now();
     const start = touch.current;
     touch.current = null;
     if (!start || zoom) return;
@@ -79,13 +100,26 @@ export function Lightbox({
     } else if (dy > 90 && Math.abs(dy) > Math.abs(dx) * 1.5) {
       onClose();
     } else if (Math.abs(dx) < 10 && Math.abs(dy) < 10 && dt < 300) {
-      const now = Date.now();
-      if (now - lastTap.current < 320) setZoom((z) => !z);
-      lastTap.current = now;
+      const target = e.target as HTMLElement;
+      if (target.tagName === "IMG") singleOrDoubleTap();
     }
   }
 
-  const fullUrl = photoUrl(slug, photo, "full") + "?download=1";
+  function onImageClick() {
+    // Touch devices already handled this in onTouchEnd; skip the synthetic click.
+    if (Date.now() - lastTouchEnd.current < 500) return;
+    singleOrDoubleTap();
+  }
+
+  async function onDownload() {
+    if (saving) return;
+    setSaving("Preparing…");
+    track("download_photo", { event_slug: slug, photo_id: photo.id });
+    const result = await savePhoto(slug, photo);
+    setSaving(result === "downloaded" ? "Saved" : null);
+    if (result === "downloaded") setTimeout(() => setSaving(null), 1500);
+  }
+
   const isFav = favorites?.has(photo.id);
 
   return (
@@ -111,14 +145,9 @@ export function Lightbox({
               ♥
             </button>
           )}
-          <a
-            className="lb-btn"
-            href={fullUrl}
-            download={`${slug}-${photo.id}.${photo.ext || "jpg"}`}
-            onClick={() => track("download_photo", { event_slug: slug, photo_id: photo.id })}
-          >
-            Download
-          </a>
+          <button className="lb-btn" onClick={onDownload} disabled={saving !== null}>
+            {saving ?? "Download"}
+          </button>
           <button className="lb-btn" onClick={onClose} aria-label="Close">
             ✕
           </button>
@@ -133,13 +162,13 @@ export function Lightbox({
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
-        onDoubleClick={() => setZoom((z) => !z)}
       >
         <img
           key={photo.id}
           src={photoUrl(slug, photo, "view")}
           alt={photo.caption || ""}
           draggable={false}
+          onClick={onImageClick}
         />
       </div>
       <button className="lb-nav lb-next" onClick={() => go(1)} aria-label="Next">
