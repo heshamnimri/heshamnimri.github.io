@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Mono } from "next/font/google";
-import { Sidebar } from "@/components/Sidebar";
-import { MobileNav } from "@/components/MobileNav";
 import { Analytics } from "@/components/Analytics";
 import "./globals.css";
-import "./layout.css";
 
 const spaceMono = Space_Mono({
   weight: ["400", "700"],
@@ -136,14 +133,8 @@ export default function RootLayout({
         />
       </head>
       <body className={spaceMono.className}>
-        <div className="site-container">
-          <Sidebar />
-          <main className="main-content">
-            <MobileNav />
-            <Analytics />
-            {children}
-          </main>
-        </div>
+        <Analytics />
+        {children}
       </body>
     </html>
   );

@@ -1,0 +1,23 @@
+name = "sham-shots-media"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+# Attach the Worker to the media subdomain. Set the zone in the dashboard first.
+routes = [
+  { pattern = "media.hishamnimri.com/*", zone_name = "hishamnimri.com" }
+]
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "sham-media"
+
+[[kv_namespaces]]
+binding = "STATE"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+[vars]
+ALLOWED_ORIGINS = "https://hishamnimri.com,https://www.hishamnimri.com,https://shamshots.com"
+
+# Secrets (set with `wrangler secret put <NAME>`):
+#   COOKIE_SECRET  long random string used to sign passcode cookies
+#   ADMIN_KEY      bearer token for inbox and favorites/all endpoints
