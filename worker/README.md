@@ -17,8 +17,8 @@ wrangler secret put ADMIN_KEY             # openssl rand -hex 24
 wrangler deploy
 ```
 
-Then point the site at it: set `NEXT_PUBLIC_MEDIA_BASE=https://media.hishamnimri.com`
-in the GitHub Actions build (repository variable) and redeploy the site.
+Then tell the site the Worker exists: add the repository variable
+`NEXT_PUBLIC_MEDIA_WORKER=true` next to `NEXT_PUBLIC_MEDIA_BASE` and redeploy.
 
 ## Admin calls
 

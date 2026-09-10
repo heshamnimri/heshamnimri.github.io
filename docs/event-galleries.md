@@ -19,8 +19,11 @@ Sample: `/e/sample-elections` (built from `public/photos/elections`).
 
 Media location is set by `NEXT_PUBLIC_MEDIA_BASE`:
 
-- unset → `/events` inside the static site (Phase 0, testing only)
-- `https://media.hishamnimri.com` → Cloudflare R2 bucket, with or without the Worker
+- unset → `public/events` inside the static site (Phase 0, testing only)
+- `https://media.hishamnimri.com` → Cloudflare R2 bucket (objects live under `events/<slug>/`)
+
+Set `NEXT_PUBLIC_MEDIA_WORKER=true` only after deploying the Worker. It switches
+the page to cookie-based passcodes, shared favorites and guest uploads.
 
 ## Publish an event
 

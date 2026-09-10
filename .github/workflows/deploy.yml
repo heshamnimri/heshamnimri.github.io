@@ -34,6 +34,7 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_MEDIA_BASE: ${{ vars.NEXT_PUBLIC_MEDIA_BASE }}
+          NEXT_PUBLIC_MEDIA_WORKER: ${{ vars.NEXT_PUBLIC_MEDIA_WORKER }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

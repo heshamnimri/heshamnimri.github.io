@@ -30,18 +30,23 @@ export type EventManifest = {
 export const SITE_URL = "https://hishamnimri.com";
 
 /**
- * Where event media lives. Phase 0 serves it from /events inside the static site.
- * Phase 1+ points this at the R2 custom domain, e.g. https://media.hishamnimri.com
+ * Where event media lives. Events always sit under `<base>/events/<slug>/`.
+ * Unset: served from the static site itself (public/events, Phase 0).
+ * Phase 1+: the R2 custom domain, e.g. https://media.hishamnimri.com
  */
-export const MEDIA_BASE = (
-  process.env.NEXT_PUBLIC_MEDIA_BASE || "/events"
-).replace(/\/$/, "");
+export const MEDIA_BASE = (process.env.NEXT_PUBLIC_MEDIA_BASE || "").replace(
+  /\/$/,
+  "",
+);
+
+/** Set NEXT_PUBLIC_MEDIA_WORKER=true once the Cloudflare Worker fronts the media. */
+export const MEDIA_WORKER = process.env.NEXT_PUBLIC_MEDIA_WORKER === "true";
 
 export const knownEventSlugs: string[] = eventsData.events;
 export const indexSlug = `index-${eventsData.indexToken}`;
 
 export function eventBase(slug: string) {
-  return `${MEDIA_BASE}/${encodeURIComponent(slug)}`;
+  return `${MEDIA_BASE}/events/${encodeURIComponent(slug)}`;
 }
 
 export function manifestUrl(slug: string) {
@@ -61,9 +66,9 @@ export function zipUrl(slug: string, manifest: EventManifest) {
   return manifest.zip ? `${eventBase(slug)}/${manifest.zip.file}` : null;
 }
 
-/** The Worker API lives next to the media when MEDIA_BASE is absolute. */
+/** The Worker API lives next to the media, but only once the Worker is deployed. */
 export function apiBase() {
-  return MEDIA_BASE.startsWith("http") ? `${MEDIA_BASE}/api` : null;
+  return MEDIA_WORKER && MEDIA_BASE.startsWith("http") ? `${MEDIA_BASE}/api` : null;
 }
 
 export function galleryUrl(slug: string) {
