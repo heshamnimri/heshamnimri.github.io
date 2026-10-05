@@ -49,7 +49,12 @@ for (const { slug, manifest } of expired) {
   console.log(`${slug}: "${manifest.title}" expired ${manifest.expires}`);
   if (doDelete) {
     // Keep a stub manifest so the page can show the "closed" notice.
-    const stub = { ...manifest, photos: [], zip: undefined };
+    const stub = {
+      ...manifest,
+      photos: [],
+      zip: undefined,
+      features: { ...manifest.features, findMe: false },
+    };
     execFileSync("rclone", ["purge", `${remote}/events/${slug}`], { stdio: "inherit" });
     execFileSync("rclone", ["rcat", `${remote}/events/${slug}/manifest.json`], {
       input: JSON.stringify(stub),

@@ -16,6 +16,7 @@
  *   --license "..."      Usage line in the footer.
  *   --favorites          Enable favorites (shared when the Worker is deployed).
  *   --upload             Enable guest uploads (requires the Worker).
+ *   --find-me            Index faces so guests can find their photos with a selfie.
  *   --out <dir>          Output root. Default: dist/events
  *   --local              Write into public/events so the static site serves it (Phase 0 / testing).
  *   --sync               Run rclone sync to R2 after building (needs RCLONE_REMOTE, e.g. r2:sham-media).
@@ -29,6 +30,7 @@
  *   <out>/<slug>/full/<id>.<ext>  (original bytes, GPS stripped)
  *   <out>/<slug>/all-photos.zip
  *   <out>/<slug>/qr.png
+ *   <out>/<slug>/faces.json      (with --find-me)
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -154,6 +156,11 @@ const manifest = {
   photos,
 };
 fs.writeFileSync(path.join(out, "manifest.json"), JSON.stringify(manifest, null, 2));
+
+if (args["find-me"]) {
+  const { indexFaces } = await import("./index-faces.mjs");
+  await indexFaces(out);
+}
 
 // Register the slug so the site build pre-renders /e/<slug>/ with a 200.
 const eventsJson = JSON.parse(fs.readFileSync(eventsJsonPath, "utf8"));

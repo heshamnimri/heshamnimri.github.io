@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   mediaCredentials,
@@ -19,6 +19,8 @@ import { Lightbox } from "./Lightbox";
 import { PasscodeGate } from "./PasscodeGate";
 import { ShareSheet } from "./ShareSheet";
 import { GuestUpload } from "./GuestUpload";
+import { FindMe, type FaceMatch } from "./FindMe";
+import { LOOSE_THRESHOLD, MATCH_THRESHOLD } from "@/lib/faces/engine";
 import { useFavorites } from "./useFavorites";
 import { downloadSelection, SELECTION_CAP_BYTES } from "./downloadSelection";
 
@@ -36,7 +38,11 @@ export function EventGallery({ slug }: { slug: string }) {
   const [share, setShare] = useState(false);
   const [upload, setUpload] = useState(false);
   const [zipping, setZipping] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"all" | "favorites">("all");
+  const [filter, setFilter] = useState<"all" | "favorites" | "me">("all");
+  const [findMe, setFindMe] = useState(false);
+  const [matches, setMatches] = useState<FaceMatch[] | null>(null);
+  const [loose, setLoose] = useState(false);
+  const findMeBar = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
     try {
@@ -73,10 +79,29 @@ export function EventGallery({ slug }: { slug: string }) {
 
   const photos = useMemo(() => {
     if (!manifest) return [];
+    if (filter === "me" && matches) {
+      const byId = new Map(manifest.photos.map((p) => [p.id, p]));
+      const min = loose ? LOOSE_THRESHOLD : MATCH_THRESHOLD;
+      return matches
+        .filter((m) => m.score >= min && byId.has(m.id))
+        .map((m) => byId.get(m.id)!);
+    }
     return filter === "favorites"
       ? manifest.photos.filter((p) => favorites.has(p.id))
       : manifest.photos;
-  }, [manifest, filter, favorites]);
+  }, [manifest, filter, favorites, matches, loose]);
+
+  const looseExtra = useMemo(
+    () =>
+      matches?.filter((m) => m.score >= LOOSE_THRESHOLD && m.score < MATCH_THRESHOLD)
+        .length ?? 0,
+    [matches],
+  );
+
+  // Bring the results into view; on phones the cover pushes them off screen.
+  useEffect(() => {
+    if (matches) findMeBar.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [matches]);
 
   useEffect(() => {
     if (!manifest?.brand?.accent) return;
@@ -166,8 +191,25 @@ export function EventGallery({ slug }: { slug: string }) {
     setZipping(null);
   }
 
+  // Browsing your matches stays within your matches.
+  const lightboxPhotos = filter === "me" ? photos : manifest.photos;
+
+  function onFaceMatches(found: FaceMatch[]) {
+    const strong = found.filter((m) => m.score >= MATCH_THRESHOLD).length;
+    track("find_me_result", { event_slug: slug, count: strong });
+    setMatches(found);
+    setLoose(strong === 0);
+    setFilter("me");
+    setFindMe(false);
+  }
+
+  function selectMatches() {
+    setSelecting(true);
+    setSelected(new Set(photos.map((p) => p.id)));
+  }
+
   function openPhoto(p: EventPhoto) {
-    const i = manifest!.photos.indexOf(p);
+    const i = lightboxPhotos.indexOf(p);
     setLightbox(i);
     track("photo_open", { event_slug: slug, photo_id: p.id });
   }
@@ -237,10 +279,18 @@ export function EventGallery({ slug }: { slug: string }) {
               <button
                 className={`btn ${filter === "favorites" ? "btn-active" : ""}`}
                 onClick={() =>
-                  setFilter((f) => (f === "all" ? "favorites" : "all"))
+                  setFilter((f) => (f === "favorites" ? "all" : "favorites"))
                 }
               >
                 Favorites {favorites.size ? `(${favorites.size})` : ""}
+              </button>
+            )}
+            {manifest.features?.findMe && (
+              <button
+                className={`btn ${filter === "me" ? "btn-active" : ""}`}
+                onClick={() => setFindMe(true)}
+              >
+                Find me
               </button>
             )}
             {manifest.features?.upload && (
@@ -256,6 +306,40 @@ export function EventGallery({ slug }: { slug: string }) {
         <p className="gallery-empty-note">
           No favorites yet. Tap the heart on a photo to add it here.
         </p>
+      )}
+
+      {filter === "me" && matches && (
+        <div className="findme-bar" role="status" ref={findMeBar}>
+          <p>
+            {photos.length
+              ? `Found you in ${photos.length} photo${photos.length === 1 ? "" : "s"}${loose ? ", including possible matches" : ""}.`
+              : "We couldn't find you in this gallery. Try another selfie, facing the camera in good light."}
+          </p>
+          <div className="gallery-actions">
+            {!loose && looseExtra > 0 && (
+              <button className="btn" onClick={() => setLoose(true)}>
+                Show {looseExtra} possible match{looseExtra === 1 ? "" : "es"}
+              </button>
+            )}
+            {photos.length > 0 && !selecting && (
+              <button className="btn" onClick={selectMatches}>
+                Select these
+              </button>
+            )}
+            <button className="btn" onClick={() => setFindMe(true)}>
+              Try another selfie
+            </button>
+            <button
+              className="btn"
+              onClick={() => {
+                setFilter("all");
+                setMatches(null);
+              }}
+            >
+              Show all photos
+            </button>
+          </div>
+        </div>
       )}
 
       <div className="gallery-grid">
@@ -327,7 +411,7 @@ export function EventGallery({ slug }: { slug: string }) {
       {lightbox !== null && (
         <Lightbox
           slug={slug}
-          photos={manifest.photos}
+          photos={lightboxPhotos}
           index={lightbox}
           onIndex={setLightbox}
           onClose={() => setLightbox(null)}
@@ -336,6 +420,9 @@ export function EventGallery({ slug }: { slug: string }) {
         />
       )}
       {share && <ShareSheet slug={slug} title={manifest.title} onClose={() => setShare(false)} />}
+      {findMe && (
+        <FindMe slug={slug} onResult={onFaceMatches} onClose={() => setFindMe(false)} />
+      )}
       {upload && apiBase() && (
         <GuestUpload slug={slug} onClose={() => setUpload(false)} />
       )}
