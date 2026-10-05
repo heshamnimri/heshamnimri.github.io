@@ -50,8 +50,8 @@ if (process.argv.includes("--sync")) {
     console.error("Set RCLONE_REMOTE (e.g. r2:sham-media) to sync.");
     process.exit(1);
   }
-  for (const f of BROWSER_MODELS) {
-    execFileSync("rclone", ["copyto", path.join(modelDir, f), `${remote}/models/faces/${f}`], { stdio: "inherit" });
-  }
+  // Directory copy, not copyto: bucket-scoped R2 tokens can't create buckets.
+  const include = BROWSER_MODELS.flatMap((f) => ["--include", f]);
+  execFileSync("rclone", ["copy", modelDir, `${remote}/models/faces`, ...include], { stdio: "inherit" });
   console.log(`Copied browser models to ${remote}/models/faces`);
 }
