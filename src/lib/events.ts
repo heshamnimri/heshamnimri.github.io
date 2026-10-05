@@ -23,7 +23,13 @@ export type EventManifest = {
   brand?: { name?: string; logo?: string; accent?: string };
   license?: string;
   zip?: { file: string; bytes: number; count: number };
-  features?: { favorites?: boolean; upload?: boolean; api?: boolean };
+  features?: {
+    favorites?: boolean;
+    upload?: boolean;
+    api?: boolean;
+    /** faces.json exists, so guests can find their photos with a selfie. */
+    findMe?: boolean;
+  };
   photos: EventPhoto[];
 };
 
@@ -64,6 +70,15 @@ export function photoUrl(
 
 export function zipUrl(slug: string, manifest: EventManifest) {
   return manifest.zip ? `${eventBase(slug)}/${manifest.zip.file}` : null;
+}
+
+export function facesUrl(slug: string) {
+  return `${eventBase(slug)}/faces.json`;
+}
+
+/** Face models for "Find me", shared by every event. */
+export function faceModelUrl(file: string) {
+  return `${MEDIA_BASE}/models/faces/${file}`;
 }
 
 /** The Worker API lives next to the media, but only once the Worker is deployed. */

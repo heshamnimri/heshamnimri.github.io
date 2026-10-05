@@ -22,3 +22,7 @@ next-env.d.ts
 # event source folders and build output (published to R2, not git)
 /events/
 /dist/
+
+# face models for "Find me" (downloaded by npm run faces:models, hosted on R2)
+/models/
+/public/models/

@@ -283,3 +283,23 @@
 @media (prefers-reduced-motion: reduce) {
   .gallery-item img, .gallery-heart { transition: none; }
 }
+
+/* Find me */
+.sheet-text { font-size: 14px; color: var(--gallery-ink-2); }
+.sheet-status { font-size: 13px; padding: 10px 12px; background: var(--gallery-bg-2); }
+.sheet-error { color: #b42318; }
+.sheet-fine { font-size: 11px; color: var(--gallery-ink-3); margin-top: 4px; }
+.findme-bar {
+  scroll-margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  background: var(--gallery-bg-2);
+  border-left: 3px solid var(--gallery-accent);
+}
+.findme-bar p { margin: 0; font-size: 14px; }
+.findme-bar .gallery-actions { margin-top: 0; }

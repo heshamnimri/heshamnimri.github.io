@@ -9,11 +9,12 @@ Sample: `/e/sample-elections` (built from `public/photos/elections`).
 
 | Piece | Where | Role |
 | --- | --- | --- |
-| Gallery page | `src/app/e/[slug]` + `src/components/gallery` | Grid, lightbox, downloads, share sheet, QR, passcode gate, favorites, guest upload |
+| Gallery page | `src/app/e/[slug]` + `src/components/gallery` | Grid, lightbox, downloads, share sheet, QR, passcode gate, favorites, guest upload, Find me |
 | 404 fallback | `src/app/not-found.tsx` | Opens any `/e/<slug>` that exists in storage but is not yet in `events.json`, so a new event never waits for a deploy |
 | Event list | `src/data/events.json` | Slugs to pre-render, plus the private index token |
 | Private index | `/e/index-<indexToken>` | Every event with status, for your eyes only |
 | Publish script | `scripts/publish-event.mjs` | Folder of JPEGs → thumbs, view sizes, originals, zip, QR, manifest |
+| Face index | `scripts/index-faces.mjs` + `src/lib/faces/engine.ts` | Builds `faces.json` for Find me; the engine is shared with the browser |
 | Expiry script | `scripts/expire-events.mjs` | Purges expired events from storage, leaves a "closed" stub |
 | Worker | `worker/` | Optional. Real passcodes, forced downloads, shared favorites, guest uploads |
 
@@ -42,10 +43,48 @@ rclone sync dist/events/nadia-omar-k3f9q2 r2:sham-media/events/nadia-omar-k3f9q2
 The script prints the link, the passcode, and where the printable QR code is.
 Re-run with `--exact --slug <slug>` to republish the same event after edits.
 
-Flags: `--cover <id>`, `--brand-name`, `--brand-logo <url>`, `--brand-accent #hex`,
+Flags: `--find-me`, `--cover <id>`, `--brand-name`, `--brand-logo <url>`, `--brand-accent #hex`,
 `--license "..."`, `--upload`, `--no-zip`, `--no-gps-strip`, `--local`.
 
 Install `exiftool` (`brew install exiftool`) so GPS is stripped from originals.
+
+## Find me (selfie search)
+
+Guests tap **Find me**, take a selfie, and the grid filters to the photos
+they're in, best match first. Everything runs in the guest's browser: the
+selfie is never uploaded.
+
+- At publish time, `index-faces.mjs` detects every face (InsightFace SCRFD
+  `det_10g` on the 1600px view image), crops it from the original, and stores a
+  512-d ArcFace embedding (`w600k_mbf`, int8) in `<slug>/faces.json`. About
+  1 MB per 1,000 faces, roughly a minute per 200 photos on an M-series Mac.
+- In the browser, `onnxruntime-web` runs the small `det_500m` detector and the
+  same `w600k_mbf` recognizer on the selfie (~16 MB, downloaded on first use),
+  then compares against `faces.json`. Cosine ≥ 0.40 is a match; "Show possible
+  matches" lowers it to 0.32. Both live in `src/lib/faces/engine.ts`.
+
+One-time setup (the indexer imports the shared `.ts` engine directly, so it
+needs Node 22.18 or newer):
+
+```sh
+npm run faces:models                                   # downloads into models/ (gitignored)
+RCLONE_REMOTE=r2:sham-media npm run faces:models -- --sync   # browser models → R2 models/faces/
+```
+
+Turn it on for a new event with `--find-me`, or add it to an existing one:
+
+```sh
+npm run event:faces -- dist/events/<slug>
+rclone copy dist/events/<slug> r2:sham-media/events/<slug> --include "{faces,manifest}.json"
+```
+
+`faces.json` holds face data for everyone in the gallery and is readable by
+anyone with the link, like the photos themselves. Keep it opt-in per event; the
+expiry script deletes it with the rest of the event. The models are InsightFace
+and licensed for non-commercial use only.
+
+For local testing without R2, run `npm run faces:models -- --local` and publish
+with `--local`.
 
 ## Storage setup (Phase 1)
 
@@ -71,4 +110,5 @@ RCLONE_REMOTE=r2:sham-media npm run event:expire -- --delete
 
 GA4 events: `gallery_view`, `gallery_unlock`, `photo_open`, `download_photo`,
 `download_all`, `download_selection`, `share_copy`, `share_native`,
-`favorite_toggle`, `guest_upload`. All carry `event_slug`.
+`favorite_toggle`, `guest_upload`, `find_me_start`, `find_me_result`,
+`find_me_no_face`, `find_me_error`. All carry `event_slug`.
