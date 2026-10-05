@@ -1,55 +1,56 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { photoUrl, track, type EventPhoto } from "@/lib/events";
+import { formatBytes, photoUrl, track, type EventPhoto } from "@/lib/events";
 import { savePhoto } from "./savePhoto";
+import { useLayer } from "./ui";
 
 type Props = {
   slug: string;
   photos: EventPhoto[];
   index: number;
+  /** Catalogue number (1-based position in the whole event) for a photo. */
+  numberOf: (p: EventPhoto) => number;
+  total: number;
   onIndex: (i: number) => void;
   onClose: () => void;
   favorites?: Set<string>;
   onFavorite?: (id: string) => void;
 };
 
+const pad = (n: number) => String(n).padStart(3, "0");
+
 export function Lightbox({
   slug,
   photos,
   index,
+  numberOf,
+  total,
   onIndex,
   onClose,
   favorites,
   onFavorite,
 }: Props) {
   const photo = photos[index];
-  const [saving, setSaving] = useState<string | null>(null);
-  const touch = useRef<{ x: number; y: number; t: number } | null>(null);
-  const lastTouchEnd = useRef(0);
+  const [saving, setSaving] = useState<"busy" | "saved" | null>(null);
+  const touch = useRef<{ x: number; y: number } | null>(null);
+  const lastSwipe = useRef(0);
+
+  useLayer(onClose);
 
   const go = useCallback(
-    (delta: number) => {
-      const next = (index + delta + photos.length) % photos.length;
-      onIndex(next);
-    },
+    (delta: number) => onIndex((index + delta + photos.length) % photos.length),
     [index, photos.length, onIndex],
   );
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowRight" || e.key === " ") go(1);
+      if (e.key === "ArrowRight") go(1);
       else if (e.key === "ArrowLeft") go(-1);
     }
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [go, onClose]);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [go]);
 
   // Preload neighbours so advancing feels instant.
   useEffect(() => {
@@ -59,102 +60,112 @@ export function Lightbox({
     });
   }, [index, photos, slug]);
 
+  useEffect(() => setSaving(null), [index]);
+
   if (!photo) return null;
 
   function onTouchStart(e: React.TouchEvent) {
     if (e.touches.length !== 1) return;
-    const t = e.touches[0];
-    touch.current = { x: t.clientX, y: t.clientY, t: Date.now() };
+    touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
   }
   function onTouchEnd(e: React.TouchEvent) {
-    lastTouchEnd.current = Date.now();
     const start = touch.current;
     touch.current = null;
     if (!start) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - start.x;
-    const dy = t.clientY - start.y;
-    const dt = Date.now() - start.t;
+    const dx = e.changedTouches[0].clientX - start.x;
+    const dy = e.changedTouches[0].clientY - start.y;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      lastSwipe.current = Date.now();
       go(dx < 0 ? 1 : -1);
     } else if (dy > 90 && Math.abs(dy) > Math.abs(dx) * 1.5) {
+      lastSwipe.current = Date.now();
       onClose();
-    } else if (Math.abs(dx) < 10 && Math.abs(dy) < 10 && dt < 300) {
-      const target = e.target as HTMLElement;
-      if (target.tagName === "IMG") go(1);
     }
   }
-
-  function onImageClick() {
-    // Touch devices already handled this in onTouchEnd; skip the synthetic click.
-    if (Date.now() - lastTouchEnd.current < 500) return;
-    go(1);
-  }
+  // A swipe also fires a click on the half it ended on; ignore that one.
+  const tap = (delta: number) => () => {
+    if (Date.now() - lastSwipe.current > 400) go(delta);
+  };
 
   async function onDownload() {
-    if (saving) return;
-    setSaving("Preparing…");
+    if (saving === "busy") return;
+    setSaving("busy");
     track("download_photo", { event_slug: slug, photo_id: photo.id });
     const result = await savePhoto(slug, photo);
-    setSaving(result === "downloaded" ? "Saved" : null);
-    if (result === "downloaded") setTimeout(() => setSaving(null), 1500);
+    if (result === "cancelled" || result === "opened") return setSaving(null);
+    setSaving("saved");
+    setTimeout(() => setSaving((s) => (s === "saved" ? null : s)), 1600);
   }
 
+  const num = numberOf(photo);
   const isFav = favorites?.has(photo.id);
+  const from = Math.max(0, index - 4);
+  const strip = photos.slice(from, index + 5);
+  const counter =
+    photos.length === total
+      ? `Nº ${pad(num)} / ${total}`
+      : `Nº ${pad(num)} · ${index + 1} of ${photos.length}`;
 
   return (
     <div
-      className="lightbox"
+      className="g-lightbox"
       role="dialog"
       aria-modal="true"
       aria-label={`Photo ${index + 1} of ${photos.length}`}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <div className="lightbox-bar">
-        <span className="lightbox-count">
-          {index + 1} / {photos.length}
-        </span>
-        <div className="lightbox-tools">
+      <div className="g-lb-top">
+        <button className="g-btn g-btn-sm" onClick={onClose}>
+          ✕ Close
+        </button>
+        <span className="g-lb-count">{counter}</span>
+      </div>
+
+      <div className="g-lb-stage">
+        <img key={photo.id} src={photoUrl(slug, photo, "view")} alt={photo.caption || ""} draggable={false} />
+        <button className="g-lb-half prev" onClick={tap(-1)} aria-label="Previous photo" />
+        <button className="g-lb-half next" onClick={tap(1)} aria-label="Next photo" />
+      </div>
+
+      <div className="g-lb-bottom">
+        <div className="g-lb-info">
+          <span className="g-lb-title">Nº {pad(num)}</span>
+          <span className="g-lb-meta">
+            {photo.caption ? `${photo.caption} · ` : ""}
+            {photo.id}.{photo.ext || "jpg"} · {formatBytes(photo.bytes)}
+          </span>
+        </div>
+        <div className="g-lb-actions">
           {favorites && onFavorite && (
             <button
-              className={`lb-btn ${isFav ? "is-on" : ""}`}
+              className={`g-icon-btn ${isFav ? "is-on" : ""}`}
               onClick={() => onFavorite(photo.id)}
               aria-label={isFav ? "Remove favorite" : "Add favorite"}
+              aria-pressed={isFav}
             >
               ♥
             </button>
           )}
-          <button className="lb-btn" onClick={onDownload} disabled={saving !== null}>
-            {saving ?? "Download"}
-          </button>
-          <button className="lb-btn" onClick={onClose} aria-label="Close">
-            ✕
+          <button className="g-btn g-btn-ink g-lb-save" onClick={onDownload} disabled={saving === "busy"}>
+            {saving === "busy" ? "Saving…" : saving === "saved" ? "Saved ✓" : "Download"}
           </button>
         </div>
       </div>
 
-      <button className="lb-nav lb-prev" onClick={() => go(-1)} aria-label="Previous">
-        ‹
-      </button>
-      <div
-        className="lightbox-stage"
-        onClick={(e) => {
-          if (e.target === e.currentTarget) onClose();
-        }}
-      >
-        <img
-          key={photo.id}
-          src={photoUrl(slug, photo, "view")}
-          alt={photo.caption || ""}
-          draggable={false}
-          onClick={onImageClick}
-        />
+      <div className="g-lb-strip">
+        {strip.map((p, k) => (
+          <button
+            key={p.id}
+            className="g-lb-thumb"
+            aria-current={from + k === index}
+            aria-label={`Photo ${numberOf(p)}`}
+            onClick={() => onIndex(from + k)}
+          >
+            <img src={photoUrl(slug, p, "thumb")} alt="" loading="lazy" />
+          </button>
+        ))}
       </div>
-      <button className="lb-nav lb-next" onClick={() => go(1)} aria-label="Next">
-        ›
-      </button>
-      {photo.caption && <p className="lightbox-caption">{photo.caption}</p>}
     </div>
   );
 }

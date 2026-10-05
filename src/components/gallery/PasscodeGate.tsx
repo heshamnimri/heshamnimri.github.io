@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { apiBase, sha256Hex, track } from "@/lib/events";
+import { galleryFonts } from "./fonts";
+import { ItalicTail } from "./ui";
 
 type Props = {
   slug: string;
@@ -50,15 +52,19 @@ export function PasscodeGate({ slug, title, passcodeHash, onUnlocked }: Props) {
   }
 
   return (
-    <div className="gallery gallery-empty">
-      <p className="gallery-kicker">Photos by Sham Shots Media</p>
-      <h1>{title}</h1>
+    <div className={`gallery ${galleryFonts}`}>
+      <div className="g-page">
+      <span className="g-kicker">Photos by Sham Shots Media · private</span>
+      <h1 className="g-title">
+        <ItalicTail text={title} />
+      </h1>
       <p>This gallery is private. Enter the passcode you were given.</p>
-      <form className="passcode-form" onSubmit={submit}>
+      <form className="g-form" onSubmit={submit}>
         <label htmlFor="gallery-passcode" className="sr-only">
           Passcode
         </label>
         <input
+          className="g-input"
           id="gallery-passcode"
           type="password"
           inputMode="text"
@@ -68,11 +74,12 @@ export function PasscodeGate({ slug, title, passcodeHash, onUnlocked }: Props) {
           placeholder="Passcode"
           required
         />
-        <button className="btn btn-primary" disabled={busy || !code}>
+        <button className="g-btn g-btn-ink g-btn-shadow" style={{ minHeight: 46 }} disabled={busy || !code}>
           {busy ? "Checking…" : "Open gallery"}
         </button>
       </form>
-      {error && <p className="form-error" role="alert">{error}</p>}
+      {error && <p className="g-error" role="alert">{error}</p>}
+      </div>
     </div>
   );
 }

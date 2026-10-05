@@ -7,17 +7,18 @@ export async function downloadSelection(
   slug: string,
   manifest: EventManifest,
   photos: EventPhoto[],
-  onProgress: (label: string) => void,
+  /** 0..1; fetching the originals is most of the work, zipping the rest. */
+  onProgress: (fraction: number) => void,
 ) {
   const { default: JSZip } = await import("jszip");
   const zip = new JSZip();
   for (const [i, p] of photos.entries()) {
-    onProgress(`Fetching ${i + 1} of ${photos.length}…`);
     const res = await fetch(photoUrl(slug, p, "full"), { credentials: mediaCredentials() });
     if (!res.ok) throw new Error(`Could not fetch ${p.id}`);
     zip.file(`${slug}-${p.id}.${p.ext || "jpg"}`, await res.arrayBuffer());
+    onProgress(((i + 1) / photos.length) * 0.9);
   }
-  onProgress("Zipping…");
+  onProgress(0.92);
   const blob = await zip.generateAsync({ type: "blob", compression: "STORE" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -26,4 +27,5 @@ export async function downloadSelection(
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 60_000);
+  onProgress(1);
 }

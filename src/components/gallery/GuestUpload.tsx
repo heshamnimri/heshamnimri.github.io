@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { apiBase, track } from "@/lib/events";
+import { ItalicTail, Sheet } from "./ui";
 
 const MAX_FILES = 20;
 const MAX_BYTES = 40 * 1024 * 1024;
@@ -43,40 +44,38 @@ export function GuestUpload({ slug, onClose }: { slug: string; onClose: () => vo
   }
 
   return (
-    <div className="sheet-backdrop" onClick={onClose}>
-      <div
-        className="sheet"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Add your photos"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2>Add your photos</h2>
+    <Sheet label="Add photos" onClose={onClose}>
+        <h2>
+          <ItalicTail text="Add your photos" />
+        </h2>
         {done > 0 ? (
           <>
-            <p>
+            <p className="g-steps">
               {done} photo{done === 1 ? "" : "s"} sent. They will show up in the
               gallery once the photographer has reviewed them.
             </p>
-            <div className="gallery-actions">
-              <button className="btn btn-primary" onClick={onClose}>Done</button>
-            </div>
+            <button className="g-btn g-btn-ink g-btn-shadow" onClick={onClose}>Done</button>
           </>
         ) : (
-          <form onSubmit={submit} className="upload-form">
-            <p>
+          <form onSubmit={submit} className="g-stack">
+            <p className="g-fine">
               Up to {MAX_FILES} photos, {MAX_BYTES / 1024 / 1024} MB each. Photos are
               reviewed before they appear.
             </p>
+            <div className="g-field">
             <label htmlFor="upload-name">Your name (optional)</label>
             <input
+              className="g-input"
               id="upload-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={80}
             />
+            </div>
+            <div className="g-field">
             <label htmlFor="upload-files">Photos</label>
             <input
+              className="g-input"
               id="upload-files"
               type="file"
               accept="image/jpeg,image/png,image/heic,image/webp"
@@ -88,21 +87,21 @@ export function GuestUpload({ slug, onClose }: { slug: string; onClose: () => vo
                 setFiles(tooBig ? [] : list);
               }}
             />
-            {error && <p className="form-error" role="alert">{error}</p>}
-            <div className="gallery-actions">
+            </div>
+            {error && <p className="g-error" role="alert">{error}</p>}
+            <div className="g-pair">
               <button
-                className="btn btn-primary"
+                className="g-btn g-btn-ink g-btn-shadow"
                 disabled={!files.length || progress !== null}
               >
                 {progress ?? `Send ${files.length || ""} photo${files.length === 1 ? "" : "s"}`}
               </button>
-              <button type="button" className="btn" onClick={onClose}>
+              <button type="button" className="g-btn" onClick={onClose}>
                 Cancel
               </button>
             </div>
           </form>
         )}
-      </div>
-    </div>
+    </Sheet>
   );
 }

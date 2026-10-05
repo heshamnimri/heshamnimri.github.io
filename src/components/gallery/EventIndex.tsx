@@ -9,6 +9,7 @@ import {
   isExpired,
   type EventManifest,
 } from "@/lib/events";
+import { galleryFonts } from "./fonts";
 
 type Row = { slug: string; manifest?: EventManifest; error?: string };
 
@@ -37,17 +38,20 @@ export function EventIndex() {
   }, []);
 
   return (
-    <div className="gallery gallery-index">
-      <header className="gallery-head">
-        <p className="gallery-kicker">Sham Shots Media · private</p>
-        <h1>All events</h1>
-        <p className="gallery-note">
+    <div className={`gallery ${galleryFonts}`}>
+      <div className="g-index">
+      <header className="g-stack">
+        <span className="g-kicker">Sham Shots Media · private</span>
+        <h1 className="g-title">
+          All <em>events</em>
+        </h1>
+        <p className="g-note">
           {rows.length} event{rows.length === 1 ? "" : "s"} in the site index.
           Events published to media storage but not yet listed here still open
           at their link.
         </p>
       </header>
-      <table className="index-table">
+      <table className="g-index-table">
         <thead>
           <tr>
             <th>Event</th>
@@ -61,7 +65,7 @@ export function EventIndex() {
             <tr key={slug}>
               <td>
                 <Link href={`/e/${slug}`}>{manifest?.title || slug}</Link>
-                <div className="index-slug">{slug}</div>
+                <div className="g-index-slug">{slug}</div>
               </td>
               <td>{formatDate(manifest?.date)}</td>
               <td>{manifest?.photos.length ?? "—"}</td>
@@ -78,6 +82,7 @@ export function EventIndex() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
