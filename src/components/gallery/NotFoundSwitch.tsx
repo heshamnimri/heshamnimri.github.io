@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { EventGallery } from "./EventGallery";
+import { EventGallery, PageMessage } from "./EventGallery";
 
 export function NotFoundSwitch() {
   const [slug, setSlug] = useState<string | null>(null);
@@ -18,11 +18,8 @@ export function NotFoundSwitch() {
   if (slug) return <EventGallery slug={slug} />;
 
   return (
-    <div className="gallery gallery-empty">
-      <h1>Page not found</h1>
-      <p>
-        That page does not exist. <Link href="/">Back to the portfolio</Link>.
-      </p>
-    </div>
+    <PageMessage kicker="Sham Shots Media" title="Page not found">
+      That page does not exist. <Link href="/">Back to the portfolio</Link>.
+    </PageMessage>
   );
 }
